@@ -1,5 +1,27 @@
 import cv2
 
+img = cv2.imread("assets/random.png", cv2.IMREAD_COLOR)
+
+if img is not None:
+    print(img.shape)
+    # print(img[0, 0])
+    # rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # print(rgb_img[0, 0])
+    # for i in range(img.shape[0]):
+    #     for j in range(img.shape[1]):
+    #         img[i, j] = max(254, img[i, j] * 2)
+    cv2.imshow("image", img)  # type: ignore
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
+    gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite("assets/gray.png", gray_img)
+else:
+    print("image not found")
+
+
+# detecting camera
+
+"""
 stream = cv2.VideoCapture(0)
 
 if not stream.isOpened():
@@ -24,3 +46,4 @@ while True:
         break
 stream.release()
 cv2.destroyAllWindows()
+"""
