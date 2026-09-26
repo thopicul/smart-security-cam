@@ -1,25 +1,26 @@
 import cv2
 
-# Initlize the Webcam
-cap = cv2.VideoCapture(0)
+stream = cv2.VideoCapture(0)
 
-# check if the webcome is opened correctly
-if not cap.isOpened():
-    print("Error: Could not open webcam.")
+if not stream.isOpened():
+    print("no camera detected")
     exit()
 
-print("Press 'q' to close the video window.")
+fps = stream.get(cv2.CAP_PROP_FPS)
+width = int(stream.get(3))
+height = int(stream.get(4))
+
+fourcc = cv2.VideoWriter.fourcc("m", "p", "4", "v")
+output = cv2.VideoWriter("stream.mp4", fourcc, fps, (width, height))
 
 while True:
-    # Capture frame by frame
-    ret, frame = cap.read()
-    # if frame is read correctly ret is true
+    ret, frame = stream.read()
     if not ret:
-        print("Can't receive frame. exiting..")
+        print("failed to grab frame")
         break
-    cv2.imshow("'Macbook webcam Feed", frame)
+    output.write(frame)
+    cv2.imshow("webcame", frame)
     if cv2.waitKey(1) == ord("q"):
         break
-
-cap.release()
+stream.release()
 cv2.destroyAllWindows()
