@@ -23,31 +23,36 @@ else:
 # detecting camera
 
 
-stream = cv2.VideoCapture(0)
+def main():
+    stream = cv2.VideoCapture(0)
 
-if not stream.isOpened():
-    print("no camera detected")
-    exit()
+    if not stream.isOpened():
+        print("no camera detected")
+        exit()
 
-fps = stream.get(cv2.CAP_PROP_FPS)
-width = int(stream.get(3))
-height = int(stream.get(4))
+    fps = stream.get(cv2.CAP_PROP_FPS)
+    width = int(stream.get(3))
+    height = int(stream.get(4))
 
-fourcc = cv2.VideoWriter.fourcc("m", "p", "4", "v")
-output = cv2.VideoWriter("stream.mp4", fourcc, fps, (width, height))
+    fourcc = cv2.VideoWriter.fourcc("m", "p", "4", "v")
+    output = cv2.VideoWriter("stream.mp4", fourcc, fps, (width, height))
 
-while True:
-    ret, frame = stream.read()
-    if not ret:
-        print("failed to grab frame")
-        break
-    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    # output.write(frame)
-    cv2.imshow("webcam gray", frame)
-    if cv2.waitKey(1) == ord("q"):
-        break
+    while True:
+        ret, frame = stream.read()
+        if not ret:
+            print("failed to grab frame")
+            break
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        blur = cv2.GaussianBlur(frame, (5, 5), 0)
+        # output.write(frame)
+        cv2.imshow("webcam gray", blur)
+        if cv2.waitKey(1) == ord("q"):
+            break
+
+    stream.release()
+    cv2.destroyAllWindows()
 
 
-stream.release()
-cv2.destroyAllWindows()
+if __name__ == "__main__":
+    main()
 # test
