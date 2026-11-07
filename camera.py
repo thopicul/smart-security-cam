@@ -41,10 +41,14 @@ while True:
     if not ret:
         print("failed to grab frame")
         break
+    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     output.write(frame)
-    cv2.imshow("webcame", frame)
+
+    cv2.imshow("webcam", frame)
     if cv2.waitKey(1) == ord("q"):
         break
+
+
 stream.release()
 cv2.destroyAllWindows()
 # test
