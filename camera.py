@@ -42,9 +42,8 @@ while True:
         print("failed to grab frame")
         break
     frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    output.write(frame)
-
-    cv2.imshow("webcam", frame)
+    # output.write(frame)
+    cv2.imshow("webcam gray", frame)
     if cv2.waitKey(1) == ord("q"):
         break
 
