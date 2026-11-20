@@ -44,7 +44,7 @@ def main():
             break
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(frame, (5, 5), 0)
-        # output.write(frame)
+        output.write(frame)
         cv2.imshow("webcam gray", blur)
         if cv2.waitKey(1) == ord("q"):
             break
