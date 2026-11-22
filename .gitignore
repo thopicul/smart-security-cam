@@ -7,7 +7,5 @@ __pycache__/
 EOF
 
 # Ignore all video recordings
-*.mp4
-*.avi
-*.mov
+
 

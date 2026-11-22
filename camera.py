@@ -24,7 +24,7 @@ else:
 
 
 def main():
-    stream = cv2.VideoCapture(0)
+    stream = cv2.VideoCapture("assets/walking.mp4")
 
     if not stream.isOpened():
         print("no camera detected")
@@ -38,17 +38,61 @@ def main():
     output = cv2.VideoWriter("stream.mp4", fourcc, fps, (width, height))
 
     while True:
-        ret, frame = stream.read()
+        ret, frame1 = stream.read()
+        ret, frame2 = stream.read()
         if not ret:
             print("failed to grab frame")
             break
+        frame1 = cv2.flip(frame1, 1)
+        frame2 = cv2.flip(frame2, 1)
+        """
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         blur = cv2.GaussianBlur(frame, (5, 5), 0)
-        output.write(frame)
-        cv2.imshow("webcam gray", blur)
+        frame2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+        blur2 = cv2.GaussianBlur(frame2, (5, 5), 0)
+        """
+
+        diff = cv2.absdiff(frame1, frame2)  # finding absolute difference between two
+        gray = cv2.cvtColor(diff, cv2.COLOR_BGR2GRAY)
+        # grey scale mode for better performance
+        # easier to find the contours in greyscale mode compared to color mode
+
+        blur = cv2.GaussianBlur(gray, (5, 5), 0)
+        # kernel size is 5,5 and sigma is 0, which means that the kernel size is calculated based on the sigma value
+        _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
+        # thresholding is used to convert the image into binary image, which means that the pixel values are either 0 or 255
+        dilated = cv2.dilate(thresh, None, iterations=3)
+        # dilating is used to increase the size of the object in the image, which means that the pixel values are either 0 or 255
+        contours, _ = cv2.findContours(
+            dilated, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
+        )
+        # countours are the boundaries of the objects in the image, and they are used to detect the movement of the objects in the image
+
+        for contour in contours:
+            # loop through all the contours and find the bounding rectangle for each contour, and then draw the rectangle on the frame1
+            x, y, width, height = cv2.boundingRect(contour)
+
+            if cv2.contourArea(contour) < 900:
+                # if the area of the contour is less than 700, then it is considered as noise and ignored
+                continue
+            cv2.rectangle(frame1, (x, y), (x + width, y + height), (0, 255, 0), 2)
+            cv2.putText(
+                frame1,
+                "Status: {}".format("Movement"),
+                (10, 20),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (0, 0, 255),
+                3,
+            )
+        # cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
+
+        output.write(frame1)
+        cv2.imshow("webcam box", frame1)
+
         if cv2.waitKey(1) == ord("q"):
             break
-
+    output.release()
     stream.release()
     cv2.destroyAllWindows()
 
